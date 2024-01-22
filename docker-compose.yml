@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  app:
+    image: louislam/uptime-kuma:latest
+    restart: always
+    volumes:
+      - ${BASE_VOLUME}/data:/app/data
+    expose:
+      - 3001
+    networks:
+      - internal
+      - nginx
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: ${LIMIT_CPU_APP:-1}
+          memory: ${LIMIT_RAM_APP:-256M}
+        reservations:
+          cpus: "0.1"
+          memory: 16M
+
+networks:
+  internal:
+  nginx:
+    external: true
